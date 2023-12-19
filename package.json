@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "deploy": "wrangler deploy",
+        "dev": "wrangler dev",
+        "start": "wrangler dev",
+        "lint": "eslint . --ext .js,.ts,.mjs --fix --ignore-path .gitignore",
+        "init:toml": "cp wrangler.example.toml wrangler.toml",
+        "postinstall": "npm run init:toml"
+    },
+    "devDependencies": {
+        "wrangler": "^3.0.0",
+        "eslint": "^8.44.0"
+    }
+}
