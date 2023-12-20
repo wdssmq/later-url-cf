@@ -64,13 +64,18 @@ async function handleRequest(request) {
         db.shift()
     }
 
+    const addInfo = {
+        url: searchParams.get('url') || '',
+        title: searchParams.get('title') || '',
+        date: searchParams.get('date') || '',
+    }
+
+    addInfo.checked = addInfo.url && addInfo.title && addInfo.date
+
     // 添加一个新的记录
-    if (pathname === '/add' && searchParams.has('url') && searchParams.has('title')) {
+    if (pathname === '/add' && addInfo.checked) {
         // 添加新的记录
-        const item = {
-            url: searchParams.get('url'),
-            title: searchParams.get('title'),
-        }
+        const item = addInfo
         if (!authCheck(curToken)) {
             oRlt.code = 401
             oRlt.msg = 'Unauthorized'
