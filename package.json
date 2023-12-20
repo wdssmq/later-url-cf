@@ -8,7 +8,7 @@
         "postinstall": "npm run init:toml"
     },
     "devDependencies": {
-        "wrangler": "^3.0.0",
-        "eslint": "^8.44.0"
+        "eslint": "^8.56.0",
+        "wrangler": "^3.22.0"
     }
 }
