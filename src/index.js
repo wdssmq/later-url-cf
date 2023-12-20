@@ -82,12 +82,12 @@ async function handleRequest(request) {
             oRlt.more = `Authorization error ${curToken}`
         } else if (!hasItem(item, db)) {
             db.push(item)
-            setCache(category, db)
-            oRlt.more = `added ${item.url}, all urls: ${db.length}`
+            await setCache(category, db)
+            oRlt.more = `added ${item.url}, count: ${db.length}, category: ${category}`
         } else {
             oRlt.code = 400
             oRlt.msg = 'url already exists'
-            oRlt.more = `${item.url} is exists, ${db.length} urls in ${category}`
+            oRlt.more = `${item.url} is exists, count: ${db.length}, category: ${category}`
         }
         return jsonResponse(oRlt)
     }
