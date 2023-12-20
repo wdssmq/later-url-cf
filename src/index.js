@@ -22,6 +22,12 @@ const jsonResponse = data => new Response(JSON.stringify(data), {
     headers: { 'Content-Type': 'application/json' },
 })
 
+// 返回 RSS 格式的数据
+import genRSS from './feed'
+const rssResponse = data => new Response(genRSS(data), {
+    headers: { 'Content-Type': 'text/xml; charset=utf-8' },
+})
+
 // 鉴权封装
 const authCheck = reqToken => reqToken === BearerToken
 
