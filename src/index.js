@@ -1,3 +1,5 @@
+/* global addEventListener LATER_URL BEARER_TOKEN MAX_COUNT */
+
 addEventListener('fetch', (event) => {
     event.respondWith(
         handleRequest(event.request).catch(
@@ -55,9 +57,9 @@ async function handleRequest(request) {
             title: searchParams.get('title'),
         }
         if (!authCheck(curToken)) {
-            oRlt.code = 401;
-            oRlt.msg = "Unauthorized";
-            oRlt.more = `Authorization error ${curToken}`;
+            oRlt.code = 401
+            oRlt.msg = 'Unauthorized'
+            oRlt.more = `Authorization error ${curToken}`
         } else if (!hasItem(item, db)) {
             db.push(item)
             setCache(category, db)
