@@ -8,6 +8,7 @@ addEventListener('fetch', (event) => {
     )
 })
 
+const listCache = () => LATER_URL.list()
 const setCache = (key, data) => LATER_URL.put(key, JSON.stringify(data))
 const getCache = (key, type = 'json') => LATER_URL.get(key, { type })
 const hasItem = (item, data) => data.some(i => i.url === item.url)
@@ -31,6 +32,14 @@ const rssResponse = data => new Response(genRSS(data), {
 // 鉴权封装
 const authCheck = reqToken => reqToken === BearerToken
 
+// 随机获取一个 key
+const getRandomKeyInfo = async () => {
+    const kvInfo = await listCache()
+    const dbKeys = kvInfo.keys
+    const randomIndex = Math.floor(Math.random() * dbKeys.length)
+    return dbKeys[randomIndex]
+}
+
 // 处理请求
 async function handleRequest(request) {
     const oRlt = {
@@ -49,7 +58,7 @@ async function handleRequest(request) {
     const category = searchParams.get('category') || 'default'
 
     // 读取已有的数据， 数量到达上限时，删除最早的一个
-    const db = await getCache(category) || []
+    let db = await getCache(category) || []
 
     if (authCheck(curToken) && db.length > MaxCount) {
         db.shift()
@@ -78,9 +87,24 @@ async function handleRequest(request) {
         return jsonResponse(oRlt)
     }
 
-    // 查询所有记录
+    // 查询记录并输出
     if (pathname === '/list') {
-        return jsonResponse(db)
+        const rndKeyInfo = await getRandomKeyInfo()
+        if (rndKeyInfo.name !== category) {
+            db = await getCache(rndKeyInfo.name) || []
+        }
+        // return jsonResponse(db)
+        return rssResponse({
+            title: 'later-url',
+            url: request.url,
+            description: 'later-url',
+            items: db.map(item => ({
+                title: item.title,
+                link: item.url,
+                description: item.title,
+                pubDate: new Date().toUTCString(),
+            })),
+        })
     }
 
     return jsonResponse(oRlt)
