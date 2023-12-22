@@ -1,5 +1,5 @@
-# later-url
-使用 Cloudflare Worker 的 KV 存储收集和管理链接
+# later-url-cf
+使用 Cloudflare Workers KV 存储服务收集网址并以 RSS 输出；
 
 ## 使用 Wrangler CLI 开发
 
