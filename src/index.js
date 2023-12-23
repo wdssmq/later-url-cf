@@ -29,6 +29,22 @@ const rssResponse = data => new Response(genRSS(data), {
     headers: { 'Content-Type': 'text/xml; charset=utf-8' },
 })
 
+// 引入路由
+import Router from './router'
+
+const router = new Router({
+    '/': {
+        type: 'index',
+    },
+    '/about': {
+        type: 'about',
+    },
+    '/list/:category': {
+        type: 'list',
+        category: 'default',
+    },
+})
+
 // 鉴权封装
 const authCheck = reqToken => reqToken === BearerToken
 
@@ -52,11 +68,18 @@ async function handleRequest(request) {
     // 获取请求的路径和参数
     const { pathname, searchParams } = new URL(request.url)
 
+    // 获取路由信息
+    const route = router.resolve(pathname)
+    // return jsonResponse({ ...route  })
+    const { type, params } = route
+
     // 获取 Token
     const curToken = request.headers.get('Authorization')
 
     // 获取分类
-    const category = searchParams.get('category') || 'default'
+    const category = params.category || searchParams.get('category') || 'default'
+    // return jsonResponse({ category })
+
 
     // 读取已有的数据， 数量到达上限时，删除最早的一个
     let db = await getCache(category) || []
@@ -94,7 +117,7 @@ async function handleRequest(request) {
     }
 
     // 查询记录并输出
-    if (pathname === '/list') {
+    if (type === 'list') {
         const rndKeyInfo = await getRandomKeyInfo()
         if (rndKeyInfo.name !== category) {
             db = await getCache(rndKeyInfo.name) || []
