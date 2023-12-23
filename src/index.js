@@ -112,12 +112,13 @@ async function handleRequest(request) {
         const rndKeyInfo = await gob.getRndKeyInfo()
         const { name, metadata } = rndKeyInfo
         const db = await gob.readDb(name)
+        const lessDb = gob.lessDb(db)
         // return jsonResponse(db)
         return rssResponse({
             title: metadata.author || 'later-url',
             url: request.url,
             description: 'later-url',
-            items: db.map(item => ({
+            items: lessDb.map(item => ({
                 title: item.title,
                 link: item.url,
                 description: item.title,

@@ -15,6 +15,21 @@ const gob = {
         this.kvStore = kvStore
     },
 
+    // 时间戳秒数除以 86400 取整
+    getDay() {
+        return Math.floor(Date.now() / 86400000)
+    },
+
+    // 传入数组的长度除以 4 再取整
+    getDivNum(arr) {
+        return Math.floor(arr.length / 4) + 2
+    },
+
+    // 判断由对象组成的数组中是否存在符合条件的成员
+    hasItemInArrData(item, arr, key = 'url') {
+        return arr.some(i => i[key] === item[key])
+    },
+
     // 鉴权封装
     isAuth(reqToken) {
         return reqToken === this.config.full_token
@@ -49,11 +64,6 @@ const gob = {
         return db
     },
 
-    // 判断由对象组成的数组中是否存在符合条件的成员
-    hasItemInArrData(item, arr, key = 'url') {
-        return arr.some(i => i[key] === item[key])
-    },
-
     // 随机获取一个 key
     async getRndKeyInfo() {
         const kvInfo = await this.listKeyValue()
@@ -61,6 +71,19 @@ const gob = {
         if (dbKeys.length === 0) return { name: 'default', metadata: {} }
         const randomIndex = Math.floor(Math.random() * dbKeys.length)
         return dbKeys[randomIndex]
+    },
+
+    // 按条件返回一部分数据
+    lessDb(db) {
+        const newDb = []
+        const curDay = gob.getDay()
+        const divNum = gob.getDivNum(db)
+        db.forEach((item, i) => {
+            if (i % divNum === curDay % divNum) {
+                newDb.push(item)
+            }
+        })
+        return newDb
     },
 }
 
