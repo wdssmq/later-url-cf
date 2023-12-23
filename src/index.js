@@ -9,7 +9,7 @@ addEventListener('fetch', (event) => {
 })
 
 const listCache = () => LATER_URL.list()
-const setCache = (key, data) => LATER_URL.put(key, JSON.stringify(data))
+const setCache = (key, data, metadata = {}) => LATER_URL.put(key, JSON.stringify(data), { metadata })
 const getCache = (key, type = 'json') => LATER_URL.get(key, { type })
 const hasItem = (item, data) => data.some(i => i.url === item.url)
 
@@ -77,9 +77,8 @@ async function handleRequest(request) {
     const curToken = request.headers.get('Authorization')
 
     // 获取分类
-    const category = params.category || searchParams.get('category') || 'default'
+    const category = searchParams.get('category') || params.category || 'default'
     // return jsonResponse({ category })
-
 
     // 读取已有的数据， 数量到达上限时，删除最早的一个
     let db = await getCache(category) || []
@@ -96,6 +95,11 @@ async function handleRequest(request) {
 
     addInfo.checked = addInfo.url && addInfo.title && addInfo.date
 
+    // 附加信息
+    const metadata = {
+        author: searchParams.get('author') || 'later-url',
+    }
+
     // 添加一个新的记录
     if (pathname === '/add' && addInfo.checked) {
         // 添加新的记录
@@ -106,7 +110,7 @@ async function handleRequest(request) {
             oRlt.more = `Authorization error ${curToken}`
         } else if (!hasItem(item, db)) {
             db.push(item)
-            await setCache(category, db)
+            await setCache(category, db, metadata)
             oRlt.more = `added ${item.url}, count: ${db.length}, category: ${category}`
         } else {
             oRlt.code = 400
@@ -119,12 +123,13 @@ async function handleRequest(request) {
     // 查询记录并输出
     if (type === 'list') {
         const rndKeyInfo = await getRandomKeyInfo()
-        if (rndKeyInfo.name !== category) {
+        const { name, metadata } = rndKeyInfo
+        if (name !== category) {
             db = await getCache(rndKeyInfo.name) || []
         }
         // return jsonResponse(db)
         return rssResponse({
-            title: 'later-url',
+            title: metadata.author || 'later-url',
             url: request.url,
             description: 'later-url',
             items: db.map(item => ({
