@@ -36,6 +36,7 @@ const authCheck = reqToken => reqToken === BearerToken
 const getRandomKeyInfo = async () => {
     const kvInfo = await listCache()
     const dbKeys = kvInfo.keys
+    if (dbKeys.length === 0) return { name: 'default' }
     const randomIndex = Math.floor(Math.random() * dbKeys.length)
     return dbKeys[randomIndex]
 }
