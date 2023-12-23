@@ -53,6 +53,15 @@ const gob = {
     hasItemInArrData(item, arr, key = 'url') {
         return arr.some(i => i[key] === item[key])
     },
+
+    // 随机获取一个 key
+    async getRndKeyInfo() {
+        const kvInfo = await this.listKeyValue()
+        const dbKeys = kvInfo.keys
+        if (dbKeys.length === 0) return { name: 'default', metadata: {} }
+        const randomIndex = Math.floor(Math.random() * dbKeys.length)
+        return dbKeys[randomIndex]
+    },
 }
 
 export {

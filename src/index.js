@@ -49,15 +49,6 @@ gob.init(
 
 const router = new Router(gob.router)
 
-// 随机获取一个 key
-const getRandomKeyInfo = async () => {
-    const kvInfo = await gob.listKeyValue()
-    const dbKeys = kvInfo.keys
-    if (dbKeys.length === 0) return { name: 'default', metadata: {} }
-    const randomIndex = Math.floor(Math.random() * dbKeys.length)
-    return dbKeys[randomIndex]
-}
-
 // 处理请求
 async function handleRequest(request) {
     const oRlt = {
@@ -118,7 +109,7 @@ async function handleRequest(request) {
 
     // 查询记录并输出
     if (type === 'list') {
-        const rndKeyInfo = await getRandomKeyInfo()
+        const rndKeyInfo = await gob.getRndKeyInfo()
         const { name, metadata } = rndKeyInfo
         const db = await gob.readDb(name)
         // return jsonResponse(db)
