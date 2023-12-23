@@ -30,6 +30,7 @@ gob.init(
     {
         full_token: 'Bearer ' + BEARER_TOKEN,
         max_count: MAX_COUNT || 137,
+        // debug: true,
     },
     // 路由配置
     {
@@ -75,17 +76,11 @@ async function handleRequest(request) {
 
     // 获取 Token
     const curToken = request.headers.get('Authorization')
+    gob.reqToken = curToken
 
     // 获取分类
     const category = searchParams.get('category') || params.category || 'default'
     // return jsonResponse({ category })
-
-    // 读取已有的数据， 数量到达上限时，删除最早的一个
-    let db = await gob.getKeyValue(category) || []
-
-    if (gob.isAuth(curToken) && db.length > gob.config.max_count) {
-        db.shift()
-    }
 
     const addInfo = {
         url: searchParams.get('url') || '',
@@ -102,6 +97,7 @@ async function handleRequest(request) {
 
     // 添加一个新的记录
     if (pathname === '/add' && addInfo.checked) {
+        const db = await gob.readDb(category)
         // 添加新的记录
         const item = addInfo
         if (!gob.isAuth(curToken)) {
@@ -124,9 +120,7 @@ async function handleRequest(request) {
     if (type === 'list') {
         const rndKeyInfo = await getRandomKeyInfo()
         const { name, metadata } = rndKeyInfo
-        if (name !== category) {
-            db = await gob.getKeyValue(rndKeyInfo.name) || []
-        }
+        const db = await gob.readDb(name)
         // return jsonResponse(db)
         return rssResponse({
             title: metadata.author || 'later-url',
