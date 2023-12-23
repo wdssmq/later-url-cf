@@ -1,6 +1,12 @@
 # later-url-cf
 使用 Cloudflare Workers KV 存储服务收集网址并以 RSS 输出；
 
+## 使用「GM_脚本」收集网址
+
+wdssmq/userscript - 各种「GM\_脚本」：
+
+[https://userscript.mizuno2023.xyz/](https://userscript.mizuno2023.xyz/ "wdssmq/userscript - 各种「GM\_脚本」")
+
 ## 使用 Wrangler CLI 开发
 
 > wrangler 安装和登录见下方链接：
