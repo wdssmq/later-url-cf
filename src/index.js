@@ -8,16 +8,6 @@ addEventListener('fetch', (event) => {
     )
 })
 
-const listCache = () => LATER_URL.list()
-const setCache = (key, data, metadata = {}) => LATER_URL.put(key, JSON.stringify(data), { metadata })
-const getCache = (key, type = 'json') => LATER_URL.get(key, { type })
-const hasItem = (item, data) => data.some(i => i.url === item.url)
-
-// 环境变量 BEARER_TOKEN 用于鉴权
-const BearerToken = 'Bearer ' + BEARER_TOKEN
-// 环境变量指定最大记录数
-const MaxCount = MAX_COUNT || 137
-
 // 返回 JSON 格式的数据
 const jsonResponse = data => new Response(JSON.stringify(data), {
     headers: { 'Content-Type': 'application/json' },
@@ -29,30 +19,40 @@ const rssResponse = data => new Response(genRSS(data), {
     headers: { 'Content-Type': 'text/xml; charset=utf-8' },
 })
 
-// 引入路由
+// 基础函数封装
+import { gob } from './gob'
 import Router from './router'
 
-const router = new Router({
-    '/': {
-        type: 'index',
+gob.init(
+    // 绑定的 KV 空间
+    LATER_URL,
+    // 环境变量
+    {
+        full_token: 'Bearer ' + BEARER_TOKEN,
+        max_count: MAX_COUNT || 137,
     },
-    '/about': {
-        type: 'about',
+    // 路由配置
+    {
+        '/': {
+            type: 'index',
+        },
+        '/about': {
+            type: 'about',
+        },
+        '/list/:category': {
+            type: 'list',
+            category: 'default',
+        },
     },
-    '/list/:category': {
-        type: 'list',
-        category: 'default',
-    },
-})
+)
 
-// 鉴权封装
-const authCheck = reqToken => reqToken === BearerToken
+const router = new Router(gob.router)
 
 // 随机获取一个 key
 const getRandomKeyInfo = async () => {
-    const kvInfo = await listCache()
+    const kvInfo = await gob.listKeyValue()
     const dbKeys = kvInfo.keys
-    if (dbKeys.length === 0) return { name: 'default' }
+    if (dbKeys.length === 0) return { name: 'default', metadata: {} }
     const randomIndex = Math.floor(Math.random() * dbKeys.length)
     return dbKeys[randomIndex]
 }
@@ -81,9 +81,9 @@ async function handleRequest(request) {
     // return jsonResponse({ category })
 
     // 读取已有的数据， 数量到达上限时，删除最早的一个
-    let db = await getCache(category) || []
+    let db = await gob.getKeyValue(category) || []
 
-    if (authCheck(curToken) && db.length > MaxCount) {
+    if (gob.isAuth(curToken) && db.length > gob.config.max_count) {
         db.shift()
     }
 
@@ -104,13 +104,13 @@ async function handleRequest(request) {
     if (pathname === '/add' && addInfo.checked) {
         // 添加新的记录
         const item = addInfo
-        if (!authCheck(curToken)) {
+        if (!gob.isAuth(curToken)) {
             oRlt.code = 401
             oRlt.msg = 'Unauthorized'
             oRlt.more = `Authorization error ${curToken}`
-        } else if (!hasItem(item, db)) {
+        } else if (!gob.hasItemInArrData(item, db)) {
             db.push(item)
-            await setCache(category, db, metadata)
+            await gob.setKeyValue(category, db, metadata)
             oRlt.more = `added ${item.url}, count: ${db.length}, category: ${category}`
         } else {
             oRlt.code = 400
@@ -125,7 +125,7 @@ async function handleRequest(request) {
         const rndKeyInfo = await getRandomKeyInfo()
         const { name, metadata } = rndKeyInfo
         if (name !== category) {
-            db = await getCache(rndKeyInfo.name) || []
+            db = await gob.getKeyValue(rndKeyInfo.name) || []
         }
         // return jsonResponse(db)
         return rssResponse({
