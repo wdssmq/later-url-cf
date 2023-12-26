@@ -15,14 +15,18 @@ const gob = {
         this.kvStore = kvStore
     },
 
-    // 时间戳秒数除以 86400 取整
-    getDay() {
-        return Math.floor(Date.now() / 86400000)
+    // 时间戳秒数除转换成天数
+    getDayStamp(dayNum = 4) {
+        const timestamp = Math.floor(Date.now() / 1000)
+        // 一天的秒数 86400
+        const daySec = 86400
+        const divNum = daySec * dayNum
+        return Math.floor(timestamp / divNum)
     },
 
     // 传入数组的长度除以 4 再取整
-    getDivNum(arr) {
-        return Math.floor(arr.length / 4) + 2
+    getDivNum(arr, num = 4) {
+        return Math.floor(arr.length / num) + 2
     },
 
     // 判断由对象组成的数组中是否存在符合条件的成员
@@ -76,10 +80,10 @@ const gob = {
     // 按条件返回一部分数据
     lessDb(db) {
         const newDb = []
-        const curDay = gob.getDay()
+        const dayStamp = gob.getDayStamp()
         const divNum = gob.getDivNum(db)
         db.forEach((item, i) => {
-            if (i % divNum === curDay % divNum) {
+            if (i % divNum === dayStamp % divNum) {
                 newDb.push(item)
             }
         })
