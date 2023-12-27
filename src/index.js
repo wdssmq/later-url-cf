@@ -114,14 +114,15 @@ async function handleRequest(request) {
         const db = await gob.readDb(name)
         const lessDb = gob.lessDb(db)
         // return jsonResponse(db)
+        const author = metadata.author || 'null'
         return rssResponse({
-            title: metadata.author || 'later-url',
+            title: author + ' - later-url',
             url: request.url,
             description: 'later-url',
             items: lessDb.map(item => ({
-                title: item.title,
+                title: `${author} - ${item.title}`,
                 link: item.url,
-                description: item.title,
+                description: `${author} - ${item.title}`,
                 pubDate: new Date().toUTCString(),
             })),
         })
