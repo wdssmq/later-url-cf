@@ -117,7 +117,7 @@ async function handleRequest(request) {
         const feedName = metadata.author || 'null'
         const feedUrl = gob.getUrlByKey(category)
         return rssResponse({
-            title: feedName + ' - later-url',
+            title: `later-url - ${feedName}`,
             url: feedUrl,
             description: 'later-url',
             items: lessDb.map(item => ({
