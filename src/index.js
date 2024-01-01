@@ -115,9 +115,10 @@ async function handleRequest(request) {
         const lessDb = gob.lessDb(db)
         // return jsonResponse(db)
         const author = metadata.author || 'null'
+        const feedUrl = gob.getUrlByKey(category)
         return rssResponse({
             title: author + ' - later-url',
-            url: request.url,
+            url: feedUrl,
             description: 'later-url',
             items: lessDb.map(item => ({
                 title: `${author} - ${item.title}`,

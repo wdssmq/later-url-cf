@@ -34,6 +34,14 @@ const gob = {
         return arr.some(i => i[key] === item[key])
     },
 
+    // 由键名获取数据源 url
+    getUrlByKey(key) {
+        // 如果 key 格式为 bilibili_1234567890
+        if (key.match(/^bilibili_\d+$/)) {
+            return `https://space.bilibili.com/${key.split('_')[1]}/video`
+        }
+    },
+
     // 鉴权封装
     isAuth(reqToken) {
         return reqToken === this.config.full_token
