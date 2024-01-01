@@ -110,20 +110,20 @@ async function handleRequest(request) {
     // 查询记录并输出
     if (type === 'list') {
         const rndKeyInfo = await gob.getRndKeyInfo()
-        const { name, metadata } = rndKeyInfo
-        const db = await gob.readDb(name)
+        const { name: category, metadata } = rndKeyInfo
+        const db = await gob.readDb(category)
         const lessDb = gob.lessDb(db)
         // return jsonResponse(db)
-        const author = metadata.author || 'null'
+        const feedName = metadata.author || 'null'
         const feedUrl = gob.getUrlByKey(category)
         return rssResponse({
-            title: author + ' - later-url',
+            title: feedName + ' - later-url',
             url: feedUrl,
             description: 'later-url',
             items: lessDb.map(item => ({
-                title: `${author} - ${item.title}`,
+                title: `${feedName} - ${item.title}`,
                 link: item.url,
-                description: `${author} - ${item.title}`,
+                description: `${feedName} - ${item.title}`,
                 pubDate: new Date().toUTCString(),
             })),
         })
