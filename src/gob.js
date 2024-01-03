@@ -26,7 +26,7 @@ const gob = {
 
     // 传入数组的长度除以 4 再取整
     getDivNum(arr, num = 4) {
-        return Math.floor(arr.length / num) + 2
+        return Math.floor(arr.length / num)
     },
 
     // 判断由对象组成的数组中是否存在符合条件的成员
