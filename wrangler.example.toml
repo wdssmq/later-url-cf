@@ -7,6 +7,7 @@ compatibility_date = "2023-12-19"
 # Docs: https://developers.cloudflare.com/workers/platform/environment-variables
 [vars]
 MAX_COUNT = 593
+PICK_RULE = { DAY_NUM = 4, ITEM_NUM = 4 }
 
 # Bind a KV Namespace. Use KV as persistent storage for small key-value pairs.
 # Docs: https://developers.cloudflare.com/workers/runtime-apis/kv

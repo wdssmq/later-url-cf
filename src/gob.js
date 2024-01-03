@@ -3,6 +3,10 @@ const gob = {
         debug: false,
         full_token: '',
         max_count: 137,
+        pick_rule: {
+            day_num: 4,
+            item_num: 4,
+        },
     },
     router: {},
     kvStore: null,
@@ -96,8 +100,8 @@ const gob = {
     // 按条件返回一部分数据
     lessDb(db) {
         const newDb = []
-        const dayStamp = gob.getDayStamp()
-        const divNum = gob.getDivNum(db)
+        const dayStamp = gob.getDayStamp(gob.config.pick_rule.day_num)
+        const divNum = gob.getDivNum(db, gob.config.pick_rule.item_num)
         db.forEach((item, i) => {
             if (i % divNum === dayStamp % divNum) {
                 newDb.push(item)

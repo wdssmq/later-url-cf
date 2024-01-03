@@ -1,4 +1,4 @@
-/* global addEventListener LATER_URL BEARER_TOKEN MAX_COUNT */
+/* global addEventListener LATER_URL BEARER_TOKEN MAX_COUNT PICK_RULE */
 
 addEventListener('fetch', (event) => {
     event.respondWith(
@@ -30,6 +30,10 @@ gob.init(
     {
         full_token: 'Bearer ' + BEARER_TOKEN,
         max_count: MAX_COUNT || 137,
+        pick_rule: {
+            day_num: PICK_RULE.DAY_NUM,
+            item_num: PICK_RULE.ITEM_NUM,
+        },
         // debug: true,
     },
     // 路由配置
