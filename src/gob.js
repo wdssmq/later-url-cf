@@ -42,6 +42,14 @@ const gob = {
         }
     },
 
+    // 拼接 RSS Item Description
+    getItemDesc(feedName, feedUrl, itemTitle) {
+        return `<![CDATA[
+            <p>${itemTitle} - ${feedName}</p>
+            <p><a href="${feedUrl}" title="${feedName}">${feedUrl}</a></p>
+        ]]>`
+    },
+
     // 鉴权封装
     isAuth(reqToken) {
         return reqToken === this.config.full_token

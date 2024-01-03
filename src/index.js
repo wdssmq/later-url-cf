@@ -123,7 +123,7 @@ async function handleRequest(request) {
             items: lessDb.map(item => ({
                 title: `${feedName} - ${item.title}`,
                 link: item.url,
-                description: `${feedName} - ${item.title}`,
+                description: gob.getItemDesc(feedName, feedUrl, item.title),
                 pubDate: new Date().toUTCString(),
             })),
         })
