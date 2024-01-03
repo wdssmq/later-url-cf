@@ -59,6 +59,7 @@ async function handleRequest(request) {
         code: 200,
         msg: 'success',
         more: '',
+        data: {},
     }
 
     // 获取请求的路径和参数
@@ -108,6 +109,7 @@ async function handleRequest(request) {
             oRlt.msg = 'url already exists'
             oRlt.more = `${item.url} is exists, count: ${db.length}, category: ${category}`
         }
+        oRlt.data.count = db.length
         return jsonResponse(oRlt)
     }
 
