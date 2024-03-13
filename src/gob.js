@@ -17,9 +17,9 @@ const gob = {
 
     // 初始化
     init(kvStore, config, router) {
-        this.config = config
-        this.router = router
-        this.kvStore = kvStore
+        gob.config = config
+        gob.router = router
+        gob.kvStore = kvStore
     },
 
     // 时间戳秒数除转换成天数
@@ -59,32 +59,32 @@ const gob = {
 
     // 鉴权封装
     isAuth(reqToken) {
-        return reqToken === this.config.full_token
+        return reqToken === gob.config.full_token
     },
 
     // kvStore.list()
     async listKeyValue() {
-        const list = await this.kvStore.list()
+        const list = await gob.kvStore.list()
         return list
     },
 
     // kvStore.get()
     async getKeyValue(key, type = 'json') {
-        const data = await this.kvStore.get(key, { type })
+        const data = await gob.kvStore.get(key, { type })
         return data
     },
 
     // kvStore.put()
     async setKeyValue(key, data, metadata = {}) {
-        const result = await this.kvStore.put(key, JSON.stringify(data), { metadata })
+        const result = await gob.kvStore.put(key, JSON.stringify(data), { metadata })
         return result
     },
 
     // 读取指定 key 的数据
     async readDb(key, type = 'json') {
-        const db = await this.getKeyValue(key, type) || []
+        const db = await gob.getKeyValue(key, type) || []
         // 数量到达上限时，删除最早的一个
-        if (gob.isAuth(this.reqToken) && db.length > gob.config.max_count) {
+        if (gob.isAuth(gob.reqToken) && db.length > gob.config.max_count) {
             db.shift()
             // await gob.setKeyValue(key, db)
         }
@@ -93,7 +93,7 @@ const gob = {
 
     // 随机获取一个 key
     async getRndKeyInfo() {
-        const kvInfo = await this.listKeyValue()
+        const kvInfo = await gob.listKeyValue()
         const dbKeys = kvInfo.keys
         if (dbKeys.length === 0) return { name: 'default', metadata: {} }
         gob.tmp.keys_num = dbKeys.length
