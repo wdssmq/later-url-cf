@@ -8,6 +8,9 @@ const gob = {
             item_num: 4,
         },
     },
+    tmp: {
+        keys_num: 0,
+    },
     router: {},
     kvStore: null,
     reqToken: '',
@@ -20,17 +23,17 @@ const gob = {
     },
 
     // 时间戳秒数除转换成天数
-    getDayStamp(dayNum = 4) {
+    getDayStamp(dayNum = 4, offset = 0) {
         const timestamp = Math.floor(Date.now() / 1000)
         // 一天的秒数 86400
         const daySec = 86400
-        const divNum = daySec * dayNum
+        const divNum = daySec * (dayNum + offset)
         return Math.floor(timestamp / divNum)
     },
 
-    // 传入数组的长度除以 4 再取整
-    getDivNum(arr, num = 4) {
-        return Math.floor(arr.length / num)
+    // 传入数组和每份的数量，计算出总共的份数
+    getAllChunksNum(arr, perChunkNum = 4) {
+        return Math.ceil(arr.length / perChunkNum)
     },
 
     // 判断由对象组成的数组中是否存在符合条件的成员
@@ -93,17 +96,21 @@ const gob = {
         const kvInfo = await this.listKeyValue()
         const dbKeys = kvInfo.keys
         if (dbKeys.length === 0) return { name: 'default', metadata: {} }
+        gob.tmp.keys_num = dbKeys.length
         const randomIndex = Math.floor(Math.random() * dbKeys.length)
         return dbKeys[randomIndex]
     },
 
     // 按条件返回一部分数据
     lessDb(db) {
+        const { day_num, item_num } = gob.config.pick_rule
         const newDb = []
-        const dayStamp = gob.getDayStamp(gob.config.pick_rule.day_num)
-        const divNum = gob.getDivNum(db, gob.config.pick_rule.item_num)
+        const offsetDays = Math.floor(gob.tmp.keys_num / day_num)
+        // console.log(offsetDays, gob.tmp.keys_num)
+        const dayStamp = gob.getDayStamp(day_num, offsetDays)
+        const chunksNum = gob.getAllChunksNum(db, item_num)
         db.forEach((item, i) => {
-            if (i % divNum === dayStamp % divNum) {
+            if (i % chunksNum === dayStamp % chunksNum) {
                 newDb.push(item)
             }
         })
