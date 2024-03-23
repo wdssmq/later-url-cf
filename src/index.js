@@ -75,7 +75,7 @@ async function handleRequest(request) {
     gob.reqToken = curToken
 
     // 获取分类
-    const category = searchParams.get('category') || params.category || 'default'
+    const category = searchParams.get('category') || params?.category || 'default'
     // return jsonResponse({ category })
 
     const addInfo = {
