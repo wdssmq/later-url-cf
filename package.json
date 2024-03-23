@@ -1,8 +1,8 @@
 {
     "scripts": {
         "deploy": "wrangler deploy",
-        "dev": "wrangler dev --port 41897",
-        "start": "wrangler dev",
+        "dev": "wrangler dev --port 8787",
+        "start": "npm run dev",
         "lint": "eslint . --ext .js,.ts,.mjs --fix --ignore-path .gitignore",
         "init:toml": "cp wrangler.example.toml wrangler.toml",
         "postinstall": "npm run init:toml"
