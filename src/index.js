@@ -53,6 +53,11 @@ gob.init(
             type: 'list',
             category: 'default',
         },
+        '/admin/:category/:act': {
+            type: 'admin',
+            category: 'default',
+            act: 'null',
+        },
     },
 )
 
@@ -145,6 +150,34 @@ async function handleRequest(request) {
                 pubDate: new Date().toUTCString(),
             })),
         })
+    }
+
+    // 管理记录
+    if (type === 'admin') {
+        if (!gob.isAuth(curToken)) {
+            oRlt.code = 401
+            oRlt.msg = 'Unauthorized'
+            oRlt.more = `Authorization error ${curToken}`
+            if (gob.config.debug) {
+                oRlt.reqCookie = reqCookie
+            }
+            oRlt.resCookie = gob.setCookie('Auth_Token', 'empty', 11)
+        } else {
+            const allKeyInfo = await gob.manageList()
+            oRlt.data = allKeyInfo
+            if (params.act !== 'null') {
+                // 判断 params.category 是否存在
+                const isExist = allKeyInfo.some(key => key.name === params.category)
+                if (params.act === 'del-cate' && isExist) {
+                    await gob.delKeyValue(category)
+                    oRlt.more = `delete category ${category}`
+                } else {
+                    oRlt.code = 400
+                    oRlt.msg = 'Bad Request'
+                    oRlt.more = `category ${category} not exists or action ${params.act} error`
+                }
+            }
+        }
     }
 
     return jsonResponse(oRlt)

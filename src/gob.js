@@ -101,6 +101,13 @@ const gob = {
         return result
     },
 
+    // kvStore.delete()
+    async delKeyValue(key) {
+        const result = await gob.kvStore.delete(key)
+        return result
+    },
+
+
     // 读取指定 key 的数据
     async readDb(key, type = 'json') {
         const db = await gob.getKeyValue(key, type) || []
@@ -110,6 +117,32 @@ const gob = {
             // await gob.setKeyValue(key, db)
         }
         return db
+    },
+
+    // 管理列表组织
+    async manageList() {
+        const kvInfo = await gob.listKeyValue()
+        const dbKeys = kvInfo.keys
+
+        // 拼接操作选项
+        const _act = (keyInfo, act = 'del-cate') => {
+            if (act === 'del-cate') {
+                return `/admin/${keyInfo.name}/${act}`
+            }
+        }
+
+        const dbList = []
+        for (const key of dbKeys) {
+            const db = await gob.getKeyValue(key.name)
+            dbList.push(Object.assign(
+                key,
+                {
+                    count: db.length,
+                    act: _act(key),
+                },
+            ))
+        }
+        return dbList
     },
 
     // 随机获取一个 key
