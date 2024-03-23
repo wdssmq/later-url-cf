@@ -39,7 +39,7 @@ gob.init(
             day_num: PICK_RULE.DAY_NUM,
             item_num: PICK_RULE.ITEM_NUM,
         },
-        // debug: true,
+        debug: IS_DEBUG || false,
     },
     // 路由配置
     {
@@ -76,6 +76,11 @@ async function handleRequest(request) {
     const route = router.resolve(pathname)
     // return jsonResponse({ ...route  })
     const { type, params } = route
+
+    // DEBUG 下输出路由信息
+    if (gob.config.debug) {
+        oRlt.route = route
+    }
 
     // 获取 Token
     const curToken = request.headers.get('Authorization') || gob.parseCookie(reqCookie, 'Auth_Token')
