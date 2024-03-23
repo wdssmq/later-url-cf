@@ -62,6 +62,27 @@ const gob = {
         return reqToken === gob.config.full_token
     },
 
+    // 解析 cookie
+    parseCookie(cookieStr, key) {
+        if (!cookieStr) return ''
+        const cookieArr = cookieStr.split(';')
+        for (const cookie of cookieArr) {
+            const [cookieKey, cookieVal] = cookie.split('=')
+            if (cookieKey.trim() === 'Auth_Token') {
+                return `Bearer ${cookieVal}`.trim()
+            }
+            if (cookieKey.trim() === key) {
+                return cookieVal.trim()
+            }
+        }
+        return ''
+    },
+
+    // 拼接 cookie
+    setCookie(key, value, expires = 1) {
+        return `${key}=${value}; path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${expires * 24 * 60 * 60};`
+    },
+
     // kvStore.list()
     async listKeyValue() {
         const list = await gob.kvStore.list()

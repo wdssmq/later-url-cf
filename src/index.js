@@ -10,7 +10,12 @@ addEventListener('fetch', (event) => {
 
 // 返回 JSON 格式的数据
 const jsonResponse = data => new Response(JSON.stringify(data), {
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+        'Content-Type': 'application/json',
+        'Set-Cookie': data.resCookie || '',
+    },
+    status: data.code || 200,
+    statusText: data.msg || 'success',
 })
 
 // 返回 RSS 格式的数据
@@ -64,6 +69,8 @@ async function handleRequest(request) {
 
     // 获取请求的路径和参数
     const { pathname, searchParams } = new URL(request.url)
+    // 获取 Cookie
+    const reqCookie = request.headers.get('Cookie')
 
     // 获取路由信息
     const route = router.resolve(pathname)
@@ -71,7 +78,7 @@ async function handleRequest(request) {
     const { type, params } = route
 
     // 获取 Token
-    const curToken = request.headers.get('Authorization')
+    const curToken = request.headers.get('Authorization') || gob.parseCookie(reqCookie, 'Auth_Token')
     gob.reqToken = curToken
 
     // 获取分类
