@@ -1,0 +1,23 @@
+### /add
+POST http://127.0.0.1:8787/add HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer token_value_here
+
+{
+    "url": "https://github.com/wdssmq/later-url-cf",
+    "title": "wdssmq/later-url-cf: 使用 Cloudflare Workers KV 存储服务收集网址并以 RSS 输出；",
+    "date": "2023-09-01"
+}
+
+### /admin/:category/del-url
+POST http://127.0.0.1:8787/admin/default/del-url HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer token_value_here
+
+{
+    "url": "https://github.com/wdssmq/later-url-cf"
+}
+
+### /admin/:category/del-cate
+GET http://127.0.0.1:8787/admin/default/del-cate HTTP/1.1
+Authorization: Bearer token_value_here

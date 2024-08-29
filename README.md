@@ -5,7 +5,7 @@
 
 wdssmq/userscript - 各种「GM\_脚本」：
 
-[https://userscript.mizuno2023.xyz/](https://userscript.mizuno2023.xyz/ "wdssmq/userscript - 各种「GM\_脚本」")
+[https://userscript.canihave.xyz/](https://userscript.canihave.xyz/ "wdssmq/userscript - 各种「GM\_脚本」")
 
 ## 使用 Wrangler CLI 开发
 
@@ -74,6 +74,8 @@ wrangler secret list
 ```
 
 ### 运行 / 发布
+
+> VSCode 可使用 [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client "REST Client") 插件实现 API 调试，见项目内的 `test/dev.http`；
 
 ```bash
 # 调试运行
