@@ -29,7 +29,7 @@ class Router {
         for (const route of dynamicRoutes) {
             // 如果 route 中含有 routePath 的前缀
             if (route.startsWith(routePath)) {
-                const routeConfig = this.routes[route]
+                const routeConfig = Object.assign({}, this.routes[route])
                 // 提取动态路径参数
                 const params = {}
                 const routeParts = route.split('/')
