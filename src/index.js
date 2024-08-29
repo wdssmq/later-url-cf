@@ -76,15 +76,25 @@ async function handleRequest(request) {
         data: {},
     }
 
+    /** ↓↓ 基础请求信息解析 ↓↓ */
+
     // 获取请求的路径和参数
     const { pathname, searchParams } = new URL(request.url)
-    // 获取 Cookie
-    const reqCookie = request.headers.get('Cookie')
+
     // 解析 POST 请求的数据
     let reqData = {}
     if (request.method === 'POST') {
         reqData = await request.json()
     }
+
+    // 获取 Cookie
+    const reqCookie = request.headers.get('Cookie')
+
+    // 获取 Token
+    gob.reqToken = request.headers.get('Authorization') || gob.parseCookie(reqCookie, 'Auth_Token')
+
+    /** ↑↑ 基础表求信息解析 ↑↑ */
+
     // 获取路由信息
     const route = router.resolve(pathname)
     // return jsonResponse({ ...route  })
@@ -98,9 +108,6 @@ async function handleRequest(request) {
         oRlt.reqData = reqData
     }
 
-    // 获取 Token
-    const curToken = request.headers.get('Authorization') || gob.parseCookie(reqCookie, 'Auth_Token')
-    gob.reqToken = curToken
 
     // 获取分类
     const category = getParams('category', 'default')
@@ -124,10 +131,10 @@ async function handleRequest(request) {
         const db = await gob.readDb(category)
         // 添加新的记录
         const item = addInfo
-        if (!gob.isAuth(curToken)) {
+        if (!gob.isAuth(gob.reqToken)) {
             oRlt.code = 401
             oRlt.msg = 'Unauthorized'
-            oRlt.more = `Authorization error ${curToken}`
+            oRlt.more = `Authorization error ${gob.reqToken}`
         } else if (!gob.hasItemInArrData(item, db)) {
             db.push(item)
             await gob.setKeyValue(category, db, metadata)
@@ -165,10 +172,10 @@ async function handleRequest(request) {
 
     // 管理记录
     if (type === 'admin') {
-        if (!gob.isAuth(curToken)) {
+        if (!gob.isAuth(gob.reqToken)) {
             oRlt.code = 401
             oRlt.msg = 'Unauthorized'
-            oRlt.more = `Authorization error ${curToken}`
+            oRlt.more = `Authorization error ${gob.reqToken}`
             if (gob.config.debug) {
                 oRlt.reqCookie = reqCookie
             }
