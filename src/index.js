@@ -90,6 +90,8 @@ async function handleRequest(request) {
     // return jsonResponse({ ...route  })
     const { type, params } = route
 
+    const getParams = gob.getParams(reqData, searchParams, route)
+
     // DEBUG 下输出请求信息
     if (gob.config.debug) {
         oRlt.route = route
@@ -101,13 +103,13 @@ async function handleRequest(request) {
     gob.reqToken = curToken
 
     // 获取分类
-    const category = searchParams.get('category') || params?.category || 'default'
+    const category = getParams('category', 'default')
     // return jsonResponse({ category })
 
     const addInfo = {
-        url: searchParams.get('url') || '',
-        title: searchParams.get('title') || '',
-        date: searchParams.get('date') || '',
+        url: getParams('url', ''),
+        title: getParams('title', ''),
+        date: getParams('date', ''),
     }
 
     addInfo.checked = addInfo.url && addInfo.title && addInfo.date

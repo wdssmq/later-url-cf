@@ -22,6 +22,13 @@ const gob = {
         gob.kvStore = kvStore
     },
 
+    // 从 reqData, searchParams 或 route.params 中获取参数
+    getParams(reqData, searchParams, route) {
+        return (key, def = '') => {
+            return reqData[key] || searchParams.get(key) || route.params[key] || def
+        }
+    },
+
     // 时间戳秒数除转换成天数
     getDayStamp(dayNum = 4, offset = 0) {
         const timestamp = Math.floor(Date.now() / 1000)
