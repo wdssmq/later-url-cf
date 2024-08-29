@@ -191,7 +191,25 @@ async function handleRequest(request) {
         if (params.act !== 'null') {
             // 判断 params.category 是否存在
             const isExist = allKeyInfo.some(key => key.name === params.category)
-            if (params.act === 'del-cate' && isExist) {
+            if (!isExist) {
+                oRlt.code = 400
+                oRlt.msg = 'Bad Request'
+                oRlt.more = `category ${category} not exists`
+                return jsonResponse(oRlt)
+            }
+            // 删除指定 url
+            if (params.act === 'del-url') {
+                const db = await gob.readDb(category)
+                const metadata = allKeyInfo.find(item => item.name === category).metadata
+                const url = getParams('url', '')
+                const newDb = db.filter(item => item.url !== url)
+                await gob.setKeyValue(category, newDb, metadata)
+                oRlt.more = `delete url ${url}`
+                return jsonResponse(oRlt)
+            }
+
+
+            if (params.act === 'del-cate') {
                 await gob.delKeyValue(category)
                 oRlt.more = `delete category ${category}`
             } else {
