@@ -80,15 +80,20 @@ async function handleRequest(request) {
     const { pathname, searchParams } = new URL(request.url)
     // 获取 Cookie
     const reqCookie = request.headers.get('Cookie')
-
+    // 解析 POST 请求的数据
+    let reqData = {}
+    if (request.method === 'POST') {
+        reqData = await request.json()
+    }
     // 获取路由信息
     const route = router.resolve(pathname)
     // return jsonResponse({ ...route  })
     const { type, params } = route
 
-    // DEBUG 下输出路由信息
+    // DEBUG 下输出请求信息
     if (gob.config.debug) {
         oRlt.route = route
+        oRlt.reqData = reqData
     }
 
     // 获取 Token
