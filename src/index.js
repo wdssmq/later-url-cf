@@ -200,10 +200,12 @@ async function handleRequest(request) {
             // 删除指定 url
             if (params.act === 'del-url') {
                 const db = await gob.readDb(category)
-                const metadata = allKeyInfo.find(item => item.name === category).metadata
+                const dbInfo = allKeyInfo.find(item => item.name === category)
+                const metadata = dbInfo.metadata
                 const url = getParams('url', '')
                 const newDb = db.filter(item => item.url !== url)
                 await gob.setKeyValue(category, newDb, metadata)
+                oRlt.data = dbInfo
                 oRlt.more = `delete url ${url}`
                 return jsonResponse(oRlt)
             }
