@@ -183,20 +183,21 @@ async function handleRequest(request) {
                 oRlt.reqCookie = reqCookie
             }
             oRlt.resCookie = gob.setCookie('Auth_Token', 'empty', 11)
-        } else {
-            const allKeyInfo = await gob.manageList()
-            oRlt.data = allKeyInfo
-            if (params.act !== 'null') {
-                // 判断 params.category 是否存在
-                const isExist = allKeyInfo.some(key => key.name === params.category)
-                if (params.act === 'del-cate' && isExist) {
-                    await gob.delKeyValue(category)
-                    oRlt.more = `delete category ${category}`
-                } else {
-                    oRlt.code = 400
-                    oRlt.msg = 'Bad Request'
-                    oRlt.more = `category ${category} not exists or action ${params.act} error`
-                }
+            return jsonResponse(oRlt)
+        }
+
+        const allKeyInfo = await gob.manageList()
+        oRlt.data = allKeyInfo
+        if (params.act !== 'null') {
+            // 判断 params.category 是否存在
+            const isExist = allKeyInfo.some(key => key.name === params.category)
+            if (params.act === 'del-cate' && isExist) {
+                await gob.delKeyValue(category)
+                oRlt.more = `delete category ${category}`
+            } else {
+                oRlt.code = 400
+                oRlt.msg = 'Bad Request'
+                oRlt.more = `category ${category} not exists or action ${params.act} error`
             }
         }
     }
