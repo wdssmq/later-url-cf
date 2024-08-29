@@ -46,6 +46,10 @@ gob.init(
         '/': {
             type: 'index',
         },
+        '/add/:category': {
+            type: 'add',
+            category: 'default',
+        },
         '/about': {
             type: 'about',
         },
@@ -109,7 +113,7 @@ async function handleRequest(request) {
     }
 
     // 添加一个新的记录
-    if (pathname === '/add' && addInfo.checked) {
+    if (type === 'add' && addInfo.checked) {
         const db = await gob.readDb(category)
         // 添加新的记录
         const item = addInfo
