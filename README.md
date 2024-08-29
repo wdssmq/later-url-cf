@@ -44,8 +44,18 @@ pnpm install
 
 ```dotenv
 BEARER_TOKEN = token_value_here
+IS_DEBUG = true
 
 ```
+
+- 使用命令行写入：
+
+```bash
+echo "BEARER_TOKEN = token_value_here" > .dev.vars
+echo "IS_DEBUG = true" >> .dev.vars
+
+```
+
 
 2、线上环境设置 Secrets
 
