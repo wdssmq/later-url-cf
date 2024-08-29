@@ -82,10 +82,7 @@ async function handleRequest(request) {
     const { pathname, searchParams } = new URL(request.url)
 
     // 解析 POST 请求的数据
-    let reqData = {}
-    if (request.method === 'POST') {
-        reqData = await request.json()
-    }
+    const reqData = request.method === 'POST' ? await request.json() : {}
 
     // 获取 Cookie
     const reqCookie = request.headers.get('Cookie')
@@ -119,15 +116,21 @@ async function handleRequest(request) {
         date: getParams('date', ''),
     }
 
-    addInfo.checked = addInfo.url && addInfo.title && addInfo.date
-
-    // 附加信息
-    const metadata = {
-        author: searchParams.get('author') || 'later-url',
-    }
-
     // 添加一个新的记录
-    if (type === 'add' && addInfo.checked) {
+    if (type === 'add') {
+        // 判断字段是否完整
+        const checked = addInfo.url && addInfo.title && addInfo.date
+        if (!checked) {
+            return jsonResponse({
+                code: 400,
+                msg: 'Bad Request',
+                more: 'Missing required fields',
+            })
+        }
+        // 附加信息
+        const metadata = {
+            author: getParams('author', 'later-url'),
+        }
         const db = await gob.readDb(category)
         // 添加新的记录
         const item = addInfo
