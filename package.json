@@ -9,6 +9,7 @@
     },
     "devDependencies": {
         "eslint": "^8.56.0",
+        "supertest": "^7.0.0",
         "wrangler": "^3.22.0"
     }
 }
